@@ -137,9 +137,10 @@ void Library::saveBooksToFile()
 {
     ofstream outfile;
     outfile.open(databaseFilename + "_books.txt");
-    for (int i = 0; i < books.size(); i++)
+    vector<Book *> b = this->getBooks();
+    for (int i = 0; i < b.size(); i++)
     {
-        Book *book = books[i];
+        Book *book = b[i];
         outfile << book->getTitle() << "," << book->getAuthor() << ","
                 << book->getPublisher() << "," << book->getPublicationYear() << ","
                 << book->getShelfNumber() << "," << book->isAvailable() << endl;
@@ -159,16 +160,16 @@ void Library::loadBooksFromFile()
     while (getline(infile, line))
     {
         stringstream ss(line);
-        string title, author, publisher, shelfNumber, availableStr;
-        int publicationYear;
+        string title, author, publisher, shelfNumber, availableStr, publicationYear;
         bool available;
         getline(ss, title, ',');
         getline(ss, author, ',');
         getline(ss, publisher, ',');
-        ss >> publicationYear;
+        // ss >> publicationYear;
+        getline(ss, publicationYear, ',');
         getline(ss, shelfNumber, ',');
-        getline(ss, availableStr, ',');
-        if (availableStr == "true")
+        getline(ss, availableStr);
+        if (availableStr == "1")
         {
             available = true;
         }
@@ -176,7 +177,7 @@ void Library::loadBooksFromFile()
         {
             available = false;
         }
-        addBook(title, author, publisher, publicationYear, shelfNumber, available);
+        addBook(title, author, publisher, stoi(publicationYear), shelfNumber, available);
     }
     infile.close();
 }
@@ -618,7 +619,6 @@ int main()
         outfile.close();
     }
     infile.close();
-
     // Create library object
     Library library(databaseFilename);
 
@@ -665,7 +665,7 @@ int main()
         }
         else if (userType == "quit" || userType == "q")
         {
-            break;
+            return 0;
         }
         else
         {

@@ -1,2 +1,4 @@
-Maze Runner,James Dashner,xyz,2000,,0
-Twilight,person1,abc,2001,,0
+twilight,author1,xyz,2000,54a,1
+Hero,author2,abc,2001,2fs,1
+Maze Runner,James Dashner,xgh,2006,656,1
+James,author2,dfj,2018,56f,1
