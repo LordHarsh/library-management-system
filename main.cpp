@@ -18,7 +18,7 @@ private:
     vector<Book *> books;    // Vector of book pointers
     vector<User *> users;    // Vector of user pointers
     string databaseFilename; // Filename of database file
-    User* loggedInUser;
+    User *loggedInUser;
     // Helper functions for file I/O
     void saveBooksToFile();
     void loadBooksFromFile();
@@ -48,20 +48,17 @@ public:
     void issueBook(int bookIndex, User *user);
     void returnBook(int bookIndex, User *user);
 
-    // Fine charging functionality
-    float calculateFine(int daysLate);
-
     // User management functionality
     void addUser(string username, string password, bool isAdmin);
     void modifyUser(int userIndex, string username, string password, bool isAdmin);
     void viewUsers();
     void deleteUser(int userIndex);
-    void setLoggedInUser(User* user);
+    void setLoggedInUser(User *user);
 
     // Accessor functions
     vector<Book *> getBooks();
     vector<User *> getUsers();
-    User* getLoggedInUser() const;
+    User *getLoggedInUser() const;
 };
 
 // Book class definition
@@ -118,7 +115,9 @@ public:
     void setPassword(string password);
     void setIsAdmin(bool isAdmin);
     void borrowBook(Book *book);
-    void returnBook(Book *book);
+    void returnBook(Book *book, int daysLate);
+    // Fine charging functionality
+    float calculateFine(int daysLate);
 };
 
 // Library implementation
@@ -355,15 +354,22 @@ void User::setIsAdmin(bool isAdmin)
 void User::borrowBook(Book *book)
 {
     borrowedBooks.push_back(book);
+    book->setAvailability(false);
 }
 
-void User::returnBook(Book *book)
+void User::returnBook(Book *book, int daysLate)
 {
     // Remove the book from the borrowedBooks vector
     for (vector<Book *>::iterator it = borrowedBooks.begin(); it != borrowedBooks.end(); ++it)
     {
         if (*it == book)
         {
+            int fine = this->calculateFine(daysLate);
+            if (!fine)
+            {
+                cout << "Your fine is " << fine << " rupees";
+            }
+            book->setAvailability(true);
             borrowedBooks.erase(it);
             break;
         }
@@ -382,13 +388,15 @@ vector<User *> Library::getUsers()
     return users;
 }
 
-User* Library::getLoggedInUser() const {
+User *Library::getLoggedInUser() const
+{
     return loggedInUser;
 }
 
 // Mutator functions
 
-void Library::setLoggedInUser(User* user){
+void Library::setLoggedInUser(User *user)
+{
     loggedInUser = user;
 }
 
@@ -441,7 +449,7 @@ void Library::deleteBook(int bookIndex)
             Book *borrowedBook = borrowedBooks[j];
             if (borrowedBook == book)
             {
-                user->returnBook(book);
+                user->returnBook(book, 0);
                 break;
             }
         }
@@ -450,31 +458,31 @@ void Library::deleteBook(int bookIndex)
     saveBooksToFile();
 }
 
-void Library::issueBook(int bookIndex, User *user)
-{
-    Book *book = books[bookIndex];
-    if (!book->isAvailable())
-    {
-        cout << "Book is not available." << endl;
-        return;
-    }
-    book->setAvailability(false);
-    user->borrowBook(book);
-    saveBooksToFile();
-}
+// void Library::issueBook(int bookIndex, User *user)
+// {
+//     Book *book = books[bookIndex];
+//     if (!book->isAvailable())
+//     {
+//         cout << "Book is not available." << endl;
+//         return;
+//     }
+//     book->setAvailability(false);
+//     user->borrowBook(book);
+//     saveBooksToFile();
+// }
 
-void Library::returnBook(int bookIndex, User *user)
-{
-    Book *book = books[bookIndex];
-    if (book->isAvailable())
-    {
-        cout << "Book is already available." << endl;
-        return;
-    }
-    book->setAvailability(true);
-    user->returnBook(book);
-    saveBooksToFile();
-}
+// void Library::returnBook(int bookIndex, User *user)
+// {
+//     Book *book = books[bookIndex];
+//     if (book->isAvailable())
+//     {
+//         cout << "Book is already available." << endl;
+//         return;
+//     }
+//     book->setAvailability(true);
+//     user->returnBook(book);
+//     saveBooksToFile();
+// }
 
 vector<Book *> Library::searchBooks(string query)
 {
@@ -493,7 +501,7 @@ vector<Book *> Library::searchBooks(string query)
     return results;
 }
 
-float Library::calculateFine(int daysLate)
+float User::calculateFine(int daysLate)
 {
     return 0.5 * daysLate;
 }
@@ -577,27 +585,28 @@ bool Library::studentLogin(string username, string password)
     }
     return false;
 }
-void Library::registerUser(string username, string password)
-{
-    // Check if username already exists
-    for (int i = 0; i < users.size(); i++)
-    {
-        if (users[i]->getUsername() == username)
-        {
-            cout << "Username already exists. Please choose another username." << endl;
-            return;
-        }
-    }
 
-    // Create new user and add to users vector
-    User *user = new User(username, password, false);
-    users.push_back(user);
+// void Library::registerUser(string username, string password)
+// {
+//     // Check if username already exists
+//     for (int i = 0; i < users.size(); i++)
+//     {
+//         if (users[i]->getUsername() == username)
+//         {
+//             cout << "Username already exists. Please choose another username." << endl;
+//             return;
+//         }
+//     }
 
-    // Save updated user list to file
-    saveUsersToFile();
+//     // Create new user and add to users vector
+//     User *user = new User(username, password, false);
+//     users.push_back(user);
 
-    cout << "User registered successfully." << endl;
-}
+//     // Save updated user list to file
+//     saveUsersToFile();
+
+//     cout << "User registered successfully." << endl;
+// }
 
 int main()
 {
@@ -628,7 +637,8 @@ int main()
     bool isAdmin = false;
     while (!loggedIn)
     {
-        cout << "Login as admin or student?\n" << "Enter quit to exit\n";
+        cout << "Login as admin or student?\n"
+             << "Enter quit to exit\n";
         string userType;
         cin >> userType;
         if (userType == "admin")
@@ -934,7 +944,7 @@ int main()
                     Book *book = books[bookIndex];
                     if (book->isAvailable())
                     {
-                        User* user = library.getLoggedInUser();
+                        User *user = library.getLoggedInUser();
                         user->borrowBook(book);
                         cout << "Book borrowed successfully.\n";
                     }
@@ -952,7 +962,7 @@ int main()
             case 4:
             {
                 // Return book
-                User* user = library.getLoggedInUser();
+                User *user = library.getLoggedInUser();
                 vector<Book *> borrowedBooks = user->getBorrowedBooks();
                 if (borrowedBooks.size() == 0)
                 {
@@ -971,9 +981,12 @@ int main()
                     cin >> bookIndex;
                     if (bookIndex >= 0 && bookIndex < borrowedBooks.size())
                     {
-                        User* user = library.getLoggedInUser();
+                        int daysLate;
+                        cout << "Enter number of days late:\n";
+                        cin >> daysLate;
+                        User *user = library.getLoggedInUser();
                         Book *book = borrowedBooks[bookIndex];
-                        user->returnBook(book);
+                        user->returnBook(book, daysLate);
                         cout << "Book returned successfully.\n";
                     }
                     else
