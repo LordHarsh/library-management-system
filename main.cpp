@@ -628,7 +628,7 @@ int main()
     bool isAdmin = false;
     while (!loggedIn)
     {
-        cout << "Login as admin or student?\n";
+        cout << "Login as admin or student?\n" << "Enter quit to exit\n";
         string userType;
         cin >> userType;
         if (userType == "admin")
@@ -662,6 +662,10 @@ int main()
             {
                 cout << "Invalid login credentials.\n";
             }
+        }
+        else if (userType == "quit" || userType == "q")
+        {
+            break;
         }
         else
         {
@@ -988,6 +992,10 @@ int main()
             }
             default:
                 cout << "Invalid choice.\n";
+                break;
+            }
+            if (!loggedIn)
+            {
                 break;
             }
         }
