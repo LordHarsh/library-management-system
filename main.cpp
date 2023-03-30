@@ -449,15 +449,7 @@ void Library::deleteUser(int userIndex) {
     cout << "User " << user->getUsername() << " has been deleted.\n\n";
 }
 
-// Get the vector of books
-vector<Book*> Library::getBooks() {
-    return books;
-}
-
-// Get the vector of users
-vector<User*> Library::getUsers() {
-    return users;
-}
+       
 
 // Admin login functionality
 bool Library::adminLogin(string username, string password) {
@@ -509,7 +501,7 @@ int main() {
     string adminUsername = "admin";
     string adminPassword = "admin123";
     bool isAdminLoggedIn = library.adminLogin(adminUsername, adminPassword);
-
+    
     if (isAdminLoggedIn) {
         cout << "Admin logged in successfully." << endl;
 
