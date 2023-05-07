@@ -29,6 +29,7 @@
 # Executables
 *.exe
 *.app
+*.out
 
 # Temporary testing files
 temp.cpp

@@ -458,32 +458,6 @@ void Library::deleteBook(int bookIndex)
     saveBooksToFile();
 }
 
-// void Library::issueBook(int bookIndex, User *user)
-// {
-//     Book *book = books[bookIndex];
-//     if (!book->isAvailable())
-//     {
-//         cout << "Book is not available." << endl;
-//         return;
-//     }
-//     book->setAvailability(false);
-//     user->borrowBook(book);
-//     saveBooksToFile();
-// }
-
-// void Library::returnBook(int bookIndex, User *user)
-// {
-//     Book *book = books[bookIndex];
-//     if (book->isAvailable())
-//     {
-//         cout << "Book is already available." << endl;
-//         return;
-//     }
-//     book->setAvailability(true);
-//     user->returnBook(book);
-//     saveBooksToFile();
-// }
-
 vector<Book *> Library::searchBooks(string query)
 {
     vector<Book *> results;
@@ -585,28 +559,6 @@ bool Library::studentLogin(string username, string password)
     }
     return false;
 }
-
-// void Library::registerUser(string username, string password)
-// {
-//     // Check if username already exists
-//     for (int i = 0; i < users.size(); i++)
-//     {
-//         if (users[i]->getUsername() == username)
-//         {
-//             cout << "Username already exists. Please choose another username." << endl;
-//             return;
-//         }
-//     }
-
-//     // Create new user and add to users vector
-//     User *user = new User(username, password, false);
-//     users.push_back(user);
-
-//     // Save updated user list to file
-//     saveUsersToFile();
-
-//     cout << "User registered successfully." << endl;
-// }
 
 int main()
 {
